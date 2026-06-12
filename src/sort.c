@@ -1,0 +1,54 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sort.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/12 23:29:42 by mbatty            #+#    #+#             */
+/*   Updated: 2026/06/12 23:32:25 by mbatty           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <string.h>
+
+#include "ctx.h"
+
+static void	swap(t_sym *s1, t_sym *s2)
+{
+	t_sym	tmp;
+
+	memcpy(&tmp, s1, sizeof(t_sym));
+	memcpy(s1, s2, sizeof(t_sym));
+	memcpy(s2, &tmp, sizeof(t_sym));
+}
+
+static int	partition(t_sym *arr, int low, int high)
+{
+	t_sym pivot = arr[high];
+
+	int i = low - 1;
+
+	for (int j = low; j <= high - 1; j++)
+	{
+		if (strcmp(arr[j].name, pivot.name) < 0)
+		{
+			i++;
+			swap(&arr[i], &arr[j]);
+		}
+	}
+
+	swap(&arr[i + 1], &arr[high]);  
+	return i + 1;
+}
+
+void	sort_syms(t_sym *arr, int low, int high)
+{
+	if (low < high)
+	{
+		int pi = partition(arr, low, high);
+
+		sort_syms(arr, low, pi - 1);
+		sort_syms(arr, pi + 1, high);
+	}
+}
