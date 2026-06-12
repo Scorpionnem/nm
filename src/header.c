@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:06:28 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 22:59:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/12 23:48:11 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	parse_elf_header(t_ctx *ctx)
 
 	hdr = ctx->map.addr;
 
-	if (memcmp(hdr->e_ident, ELFMAG, sizeof(ELFMAG) - 1))
+	if (ft_memcmp(hdr->e_ident, ELFMAG, sizeof(ELFMAG) - 1))
 	{
 		return (printf("ft_nm: %s: invalid ELFMAG\n", ctx->path), -1);
 	}

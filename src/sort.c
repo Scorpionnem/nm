@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:29:42 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 23:32:25 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/12 23:51:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ static void	swap(t_sym *s1, t_sym *s2)
 {
 	t_sym	tmp;
 
-	memcpy(&tmp, s1, sizeof(t_sym));
-	memcpy(s1, s2, sizeof(t_sym));
-	memcpy(s2, &tmp, sizeof(t_sym));
+	ft_memcpy(&tmp, s1, sizeof(t_sym));
+	ft_memcpy(s1, s2, sizeof(t_sym));
+	ft_memcpy(s2, &tmp, sizeof(t_sym));
 }
 
 static int	partition(t_sym *arr, int low, int high)
@@ -31,15 +31,15 @@ static int	partition(t_sym *arr, int low, int high)
 
 	for (int j = low; j <= high - 1; j++)
 	{
-		if (strcmp(arr[j].name, pivot.name) < 0)
+		if (ft_strcmp(arr[j].name, pivot.name) < 0)
 		{
 			i++;
 			swap(&arr[i], &arr[j]);
 		}
 	}
 
-	swap(&arr[i + 1], &arr[high]);  
-	return i + 1;
+	swap(&arr[i + 1], &arr[high]);
+	return (i + 1);
 }
 
 void	sort_syms(t_sym *arr, int low, int high)

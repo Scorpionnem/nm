@@ -7,6 +7,7 @@ LFLAGS :=
 ###
 
 INCLUDE_DIRS :=	inc/		\
+				libft/		\
 
 C_SRCS :=	src/main.c		\
 			src/header.c	\
@@ -16,6 +17,8 @@ C_SRCS :=	src/main.c		\
 
 
 ###
+
+LIBFT = ./libft/libft.a
 
 INCLUDE_DIRS :=	$(addprefix -I, $(INCLUDE_DIRS))
 
@@ -40,14 +43,17 @@ _RED 					:= $(shell $(TPUT) setaf 1)
 _GRAY 					:= $(shell $(TPUT) setaf 8)
 _PURPLE 				:= $(shell $(TPUT) setaf 5)
 
-compile:
+compile: $(LIBFT)
 	@make -j all --no-print-directory
 
 all: $(NAME)
 
+$(LIBFT):
+	@make -C ./libft all --no-print-directory
+
 $(NAME): $(OBJS)
 	@echo 'Linking $(_BOLD)$(NAME)$(_RESET)'
-	@$(CC) $(CFLAGS) -no-pie $(LFLAGS) $(INCLUDE_DIRS) -o $@ $^
+	@$(CC) $(CFLAGS) -no-pie $(LFLAGS) $(INCLUDE_DIRS) -o $@ $^ $(LIBFT)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -58,10 +64,12 @@ $(OBJ_DIR)/%.o: %.c
 re: fclean compile
 
 fclean: clean
+	@make -C ./libft fclean --no-print-directory
 	@echo 'Removed $(_BOLD)$(NAME)$(_RESET)'
 	@rm -rf $(NAME)
 
 clean:
+	@make -C ./libft clean --no-print-directory
 	@echo 'Removed $(_BOLD)$(OBJ_DIR)$(_RESET)'
 	@rm -rf $(OBJ_DIR)
 

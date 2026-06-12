@@ -6,13 +6,15 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:09:14 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 23:32:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/12 23:45:39 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <stdint.h>
+
+#include "libft.h"
 
 typedef struct s_map
 {
