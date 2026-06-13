@@ -2,3 +2,4 @@ ft_nm
 obj/
 *.o
 *.d
+tests

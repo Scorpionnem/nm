@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 15:57:43 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 16:27:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 16:55:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,37 +19,23 @@
 
 static char	get_sym_char_32(Elf32_Sym *sym, Elf32_Shdr *section_hdr)
 {
-	char	res = '?';
-
-	unsigned char	bind = ELF32_ST_BIND(sym->st_info);
+	uint8_t	bind = ELF32_ST_BIND(sym->st_info);
 	switch (sym->st_shndx)
 	{
 		case SHN_UNDEF:
-		{
-			if (bind == STB_WEAK)
-				return ('w');
-			return ('U');
-		}
+			return (bind == STB_WEAK ? 'w' : 'U');
 		case SHN_ABS:
-		{
-			if (bind == STB_GLOBAL)
-				return ('A');
-			else
-				return ('a');
-		}
+			return (bind == STB_GLOBAL ? 'A' : 'a');
 		case SHN_COMMON:
-		{
-			if (bind == STB_GLOBAL)
-				return ('C');
-			else
-				return ('c');
-		}
+			return (bind == STB_GLOBAL ? 'C' : 'c');
 	}
 	if (bind == STB_WEAK)
 		return ('W');
 
 	unsigned int	type = section_hdr[sym->st_shndx].sh_type;
 	unsigned int	flags = section_hdr[sym->st_shndx].sh_flags;
+
+	char	res = '?';
 
 	if (flags & SHF_EXECINSTR)
 		res = 'T';
@@ -60,7 +46,7 @@ static char	get_sym_char_32(Elf32_Sym *sym, Elf32_Shdr *section_hdr)
 	else if (flags & SHF_ALLOC && !(flags & SHF_WRITE))
 		res = 'R';
 	else
-		return '?';
+		return ('?');
 
 	if (bind != STB_GLOBAL)
 		res += 32;
