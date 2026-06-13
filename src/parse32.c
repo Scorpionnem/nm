@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 15:57:43 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 17:11:09 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 17:37:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	parse_32(t_ctx *ctx)
 
 		char *name = strings + sym->st_name;
 
-		if (name[0] == 0
+		if ((!ctx->show_debug_syms && name[0] == 0)
 			|| (!ctx->show_debug_syms && ELF32_ST_TYPE(sym->st_info) == STT_FILE)
 			|| (!ctx->show_debug_syms && ELF32_ST_TYPE(sym->st_info) == STT_SECTION))
 			continue ;
