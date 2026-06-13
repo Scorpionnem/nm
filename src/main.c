@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 22:27:19 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 23:32:06 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 12:33:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,6 @@ int	main(int ac, char **av)
 	int	error = 0;
 
 	for (int i = 1; i < ac; i++)
-	{
-		int	res = ft_nm(&ctx, av[i]);
-
-		error = (error != 0 || res != 0) ? 1 : 0;
-	}
+		error = (error != 0 || ft_nm(&ctx, av[i]) != 0) ? 1 : 0;
 	return (error);
 }

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:09:14 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 23:45:39 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 12:30:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,3 +48,5 @@ int	get_map(t_map *map, const char *path);
 int	close_map(t_map *map);
 
 int	parse_64_little_endian(t_ctx *ctx);
+
+void	ft_itoa_hex(char *buf, uint32_t n);

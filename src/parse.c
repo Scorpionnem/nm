@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:02:22 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 23:32:32 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 12:31:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,23 @@ char	get_sym_char(Elf64_Sym *sym, Elf64_Shdr *section_hdr)
 	return (res);
 }
 
+void	print_syms(t_sym *syms_arr, uint64_t syms_count)
+{
+	for (uint64_t i = 0; i < syms_count; i++)
+	{
+		char	buf1[17] = {0};
+		ft_itoa_hex(buf1, syms_arr[i].value);
+
+		char	buf2[17] = "0000000000000000";
+		ft_memcpy(buf2 + (sizeof(buf2) - strlen(buf1) - 1), buf1, strlen(buf1) - 1);
+
+		if (syms_arr[i].value != 0)
+			printf("%s %c %s\n", buf2, syms_arr[i].c, syms_arr[i].name);
+		else
+			printf("                 %c %s\n", syms_arr[i].c, syms_arr[i].name);
+	}
+}
+
 int	parse_64_little_endian(t_ctx *ctx)
 {
 	Elf64_Ehdr	*elf_hdr = (Elf64_Ehdr *)ctx->map.addr;
@@ -116,8 +133,9 @@ int	parse_64_little_endian(t_ctx *ctx)
 
 	sort_syms(syms_arr, 0, sym_idx - 1);
 
-	for (int i = 0; i < sym_idx; i++)
-		printf("%lx\t%c\t%s\n", syms_arr[i].value, syms_arr[i].c, syms_arr[i].name);
+	printf("\n%s:\n", ctx->path);
+
+	print_syms(syms_arr, sym_idx);
 
 	free(syms_arr);
 	return (0);

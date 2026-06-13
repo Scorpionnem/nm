@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:06:28 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 23:48:11 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 12:32:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	parse_elf_header(t_ctx *ctx)
 
 	if (ft_memcmp(hdr->e_ident, ELFMAG, sizeof(ELFMAG) - 1))
 	{
-		return (printf("ft_nm: %s: invalid ELFMAG\n", ctx->path), -1);
+		return (printf("ft_nm: %s: file format not recognized\n", ctx->path), -1);
 	}
 
 	if (hdr->e_ident[EI_VERSION] != 1)

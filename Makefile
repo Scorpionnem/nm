@@ -1,7 +1,7 @@
 NAME :=	ft_nm
 
 CC :=	cc
-CFLAGS := -MP -MMD -Wall -Wextra -Werror
+CFLAGS := -g -MP -MMD -Wall -Wextra -Werror
 LFLAGS :=
 
 ###
@@ -14,6 +14,7 @@ C_SRCS :=	src/main.c		\
 			src/map.c		\
 			src/parse.c		\
 			src/sort.c		\
+			src/itoa.c		\
 
 
 ###
