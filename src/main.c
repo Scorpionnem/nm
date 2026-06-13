@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 22:27:19 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 12:33:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 12:39:32 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,13 @@ int	ft_nm(t_ctx *ctx, char *path)
 		return (-1);
 	}
 
-	if (ctx->is_little_endian && ctx->is_x64)	
+	if (!ctx->is_little_endian)
+		return (printf("ft_nm: endianness not supported\n"), -1);
+
+	if (ctx->is_x64)	
 		parse_64_little_endian(ctx);
+	// else
+	// 	parse_32_little_endian(ctx);
 
 	close_map(&ctx->map);
 	return (0);
@@ -44,7 +49,9 @@ int	ft_nm(t_ctx *ctx, char *path)
 
 int	main(int ac, char **av)
 {
-	t_ctx	ctx;
+	t_ctx	ctx = {0};
+
+	ctx.print_path = ac > 2;
 
 	int	error = 0;
 

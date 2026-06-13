@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:09:14 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 12:30:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 12:39:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ typedef struct s_map
 
 typedef struct s_ctx
 {
+	int		print_path;
+
 	int		is_x64;
 	int		is_little_endian;
 

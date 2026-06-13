@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:02:22 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 12:31:58 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 12:39:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,8 @@ int	parse_64_little_endian(t_ctx *ctx)
 
 	sort_syms(syms_arr, 0, sym_idx - 1);
 
-	printf("\n%s:\n", ctx->path);
+	if (ctx->print_path)
+		printf("\n%s:\n", ctx->path);
 
 	print_syms(syms_arr, sym_idx);
 
