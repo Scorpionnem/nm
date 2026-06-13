@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 15:57:43 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 16:55:54 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 17:11:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,8 @@ int	parse_32(t_ctx *ctx)
 		char *name = strings + sym->st_name;
 
 		if (name[0] == 0
-			|| ELF32_ST_TYPE(sym->st_info) == STT_FILE
-			|| ELF32_ST_TYPE(sym->st_info) == STT_SECTION)
+			|| (!ctx->show_debug_syms && ELF32_ST_TYPE(sym->st_info) == STT_FILE)
+			|| (!ctx->show_debug_syms && ELF32_ST_TYPE(sym->st_info) == STT_SECTION))
 			continue ;
 
 		syms_arr[sym_idx++] = (t_sym){
@@ -118,7 +118,8 @@ int	parse_32(t_ctx *ctx)
 		};
 	}
 
-	sort_syms(syms_arr, 0, sym_idx - 1);
+	if (!ctx->no_sort)
+		sort_syms(syms_arr, ctx->reverse_sort, 0, sym_idx - 1);
 
 	if (ctx->print_path)
 		printf("\n%s:\n", ctx->path);

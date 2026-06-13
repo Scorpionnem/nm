@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:29:42 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 23:51:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 17:01:26 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	swap(t_sym *s1, t_sym *s2)
 	ft_memcpy(s2, &tmp, sizeof(t_sym));
 }
 
-static int	partition(t_sym *arr, int low, int high)
+static int	partition(t_sym *arr, int reverse, int low, int high)
 {
 	t_sym pivot = arr[high];
 
@@ -31,7 +31,8 @@ static int	partition(t_sym *arr, int low, int high)
 
 	for (int j = low; j <= high - 1; j++)
 	{
-		if (ft_strcmp(arr[j].name, pivot.name) < 0)
+		int	do_swap = reverse ? ft_strcmp(arr[j].name, pivot.name) > 0 : ft_strcmp(arr[j].name, pivot.name) < 0;
+		if (do_swap)
 		{
 			i++;
 			swap(&arr[i], &arr[j]);
@@ -42,13 +43,13 @@ static int	partition(t_sym *arr, int low, int high)
 	return (i + 1);
 }
 
-void	sort_syms(t_sym *arr, int low, int high)
+void	sort_syms(t_sym *arr, int reverse, int low, int high)
 {
 	if (low < high)
 	{
-		int pi = partition(arr, low, high);
+		int pi = partition(arr, reverse, low, high);
 
-		sort_syms(arr, low, pi - 1);
-		sort_syms(arr, pi + 1, high);
+		sort_syms(arr, reverse, low, pi - 1);
+		sort_syms(arr, reverse, pi + 1, high);
 	}
 }

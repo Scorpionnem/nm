@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:09:14 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 16:17:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 17:13:20 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,12 @@ typedef struct s_ctx
 {
 	int		print_path;
 
+	int		reverse_sort;
+	int		no_sort;
+	int		show_debug_syms;
+	int		show_extern_only;
+	int		show_undefined_only;
+
 	int		is_x64;
 	int		is_little_endian;
 
@@ -44,7 +50,7 @@ typedef struct	s_sym
 	char		*name;
 }	t_sym;
 
-void	sort_syms(t_sym *arr, int low, int high);
+void	sort_syms(t_sym *arr, int reverse, int low, int high);
 
 int	parse_elf_header(t_ctx *ctx);
 

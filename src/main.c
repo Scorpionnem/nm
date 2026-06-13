@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 22:27:19 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 15:58:33 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 17:34:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,19 +47,71 @@ int	ft_nm(t_ctx *ctx, char *path)
 	return (0);
 }
 
+#define HELP_STRING "\
+\n\
+Usage:\n  ./ft_nm [option(s)] [file(s)]\n\
+\n\
+Options:\n\
+  -h\tshow help message and exit\n\
+  -a\tshow debug suymbols\n\
+  -g\tshow extern only\n\
+  -u\tshow undefined only\n\
+  -r\treverse sort\n\
+  -p\tno sort\n\
+\n\
+"
+
+void	print_help()
+{
+	printf(HELP_STRING);
+}
+
+int	parse_opt(t_ctx *ctx, int *ac, char ***av)
+{
+	int	i = -1;
+	int	dump = 0;
+
+	*ac = 0;
+	(*av)++;
+	while ((*av)[++i])
+	{
+		char	*arg = (*av)[i];
+
+		if (!ft_strcmp("-h", arg))
+			return (print_help(), -1);
+		else if (!ft_strcmp("-a", arg))
+			ctx->show_debug_syms = 1;
+		else if (!ft_strcmp("-p", arg))
+			ctx->no_sort = 1;
+		else if (!ft_strcmp("-r", arg))
+			ctx->reverse_sort = 1;
+		else if (!ft_strcmp("-g", arg))
+			ctx->show_extern_only = 1;
+		else if (!ft_strcmp("-u", arg))
+			ctx->show_undefined_only = 1;
+		else
+		{
+			(*ac)++;
+			(*av)[dump++] = (*av)[i];
+		}
+	}
+	(*av)[dump] = NULL;
+	return (0);
+}
+
 int	main(int ac, char **av)
 {
 	t_ctx	ctx = {0};
 
+	if (parse_opt(&ctx, &ac, &av) == -1)
+		return (-1);
+	
 	ctx.print_path = ac > 2;
 
 	int	error = 0;
 
-	for (int i = 1; i < ac; i++)
-	{
-		int	res = ft_nm(&ctx, av[i]);
+	for (int i = 0; i < ac; i++)
+		error = (ft_nm(&ctx, av[i]) || error != 0) ? 1 : 0;
 
-		error = (error != 0 || res != 0) ? 1 : 0;
-	}
 	return (error);
 }
