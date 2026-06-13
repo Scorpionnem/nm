@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:26:22 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/12 22:27:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 15:53:25 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	get_map(t_map *map, const char *path)
 	if (map->addr == MAP_FAILED)
 	{
 		close(map->fd);
-		return (printf("mmap: %s\n", strerror(errno)), -1);
+		return (printf("mmap: %s: %s\n", path, strerror(errno)), -1);
 	}
 	return (0);
 }

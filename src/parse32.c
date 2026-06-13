@@ -1,0 +1,144 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse32.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/13 15:57:43 by mbatty            #+#    #+#             */
+/*   Updated: 2026/06/13 16:27:19 by mbatty           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <elf.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "ctx.h"
+
+static char	get_sym_char_32(Elf32_Sym *sym, Elf32_Shdr *section_hdr)
+{
+	char	res = '?';
+
+	unsigned char	bind = ELF32_ST_BIND(sym->st_info);
+	switch (sym->st_shndx)
+	{
+		case SHN_UNDEF:
+		{
+			if (bind == STB_WEAK)
+				return ('w');
+			return ('U');
+		}
+		case SHN_ABS:
+		{
+			if (bind == STB_GLOBAL)
+				return ('A');
+			else
+				return ('a');
+		}
+		case SHN_COMMON:
+		{
+			if (bind == STB_GLOBAL)
+				return ('C');
+			else
+				return ('c');
+		}
+	}
+	if (bind == STB_WEAK)
+		return ('W');
+
+	unsigned int	type = section_hdr[sym->st_shndx].sh_type;
+	unsigned int	flags = section_hdr[sym->st_shndx].sh_flags;
+
+	if (flags & SHF_EXECINSTR)
+		res = 'T';
+	else if (flags & SHF_ALLOC && type == SHT_NOBITS)
+		res = 'B';
+	else if (flags & SHF_ALLOC && flags & SHF_WRITE)
+		res = 'D';
+	else if (flags & SHF_ALLOC && !(flags & SHF_WRITE))
+		res = 'R';
+	else
+		return '?';
+
+	if (bind != STB_GLOBAL)
+		res += 32;
+	return (res);
+}
+
+static void	print_syms_32(t_sym *syms_arr, uint32_t syms_count)
+{
+	for (uint32_t i = 0; i < syms_count; i++)
+	{
+		char	buf1[9] = {0};
+		ft_itoa_hex(buf1, syms_arr[i].value);
+
+		char	buf2[9] = "00000000";
+		ft_memcpy(buf2 + (8 - strlen(buf1)), buf1, strlen(buf1));
+
+		if (syms_arr[i].show_value)
+			printf("%s %c %s\n", buf2, syms_arr[i].c, syms_arr[i].name);
+		else
+			printf("                 %c %s\n", syms_arr[i].c, syms_arr[i].name);
+	}
+}
+
+int	parse_32(t_ctx *ctx)
+{
+	Elf32_Ehdr	*elf_hdr = (Elf32_Ehdr *)ctx->map.addr;
+
+	Elf32_Shdr	*section_hdr = (Elf32_Shdr *)((char *)ctx->map.addr + elf_hdr->e_shoff);
+
+	Elf32_Shdr	*symtab_hdr = NULL;
+
+	int	found = 0;
+	for (int i = 0; i < elf_hdr->e_shnum; i++)
+		if (section_hdr[i].sh_type == SHT_SYMTAB)
+		{
+			symtab_hdr = &section_hdr[i];
+			found = 1;
+		}
+
+	if (!found)
+		return (printf("ft_nm: %s: no symbols\n", ctx->path), -1);
+
+	Elf32_Shdr	*string_hdr = &section_hdr[symtab_hdr->sh_link];
+	Elf32_Sym	*symbols = (Elf32_Sym *)((char *)ctx->map.addr + symtab_hdr->sh_offset);
+
+	size_t		nsyms = symtab_hdr->sh_size / sizeof(Elf32_Sym);
+
+	char	*strings = (char *)ctx->map.addr + string_hdr->sh_offset;
+
+	t_sym	*syms_arr = malloc(nsyms * sizeof(t_sym));
+	int		sym_idx = 0;
+
+	for (size_t i = 1; i < nsyms; i++)
+	{
+		Elf32_Sym	*sym = &symbols[i];
+
+		char *name = strings + sym->st_name;
+
+		if (name[0] == 0
+			|| ELF32_ST_TYPE(sym->st_info) == STT_FILE
+			|| ELF32_ST_TYPE(sym->st_info) == STT_SECTION)
+			continue ;
+
+		syms_arr[sym_idx++] = (t_sym){
+			.c = get_sym_char_32(sym, section_hdr),
+			.value = sym->st_value,
+			.name = name,
+			.show_value = sym->st_shndx != SHN_UNDEF
+		};
+	}
+
+	sort_syms(syms_arr, 0, sym_idx - 1);
+
+	if (ctx->print_path)
+		printf("\n%s:\n", ctx->path);
+
+	print_syms_32(syms_arr, sym_idx);
+
+	free(syms_arr);
+	return (0);
+}

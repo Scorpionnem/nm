@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse.c                                            :+:      :+:    :+:   */
+/*   parse64.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:02:22 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 12:39:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 16:26:35 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 #include "ctx.h"
 
-char	get_sym_char(Elf64_Sym *sym, Elf64_Shdr *section_hdr)
+static char	get_sym_char_64(Elf64_Sym *sym, Elf64_Shdr *section_hdr)
 {
 	char	res = '?';
 
@@ -67,7 +67,7 @@ char	get_sym_char(Elf64_Sym *sym, Elf64_Shdr *section_hdr)
 	return (res);
 }
 
-void	print_syms(t_sym *syms_arr, uint64_t syms_count)
+static void	print_syms_64(t_sym *syms_arr, uint64_t syms_count)
 {
 	for (uint64_t i = 0; i < syms_count; i++)
 	{
@@ -75,16 +75,16 @@ void	print_syms(t_sym *syms_arr, uint64_t syms_count)
 		ft_itoa_hex(buf1, syms_arr[i].value);
 
 		char	buf2[17] = "0000000000000000";
-		ft_memcpy(buf2 + (sizeof(buf2) - strlen(buf1) - 1), buf1, strlen(buf1) - 1);
+		ft_memcpy(buf2 + (16 - strlen(buf1)), buf1, strlen(buf1));
 
-		if (syms_arr[i].value != 0)
+		if (syms_arr[i].show_value)
 			printf("%s %c %s\n", buf2, syms_arr[i].c, syms_arr[i].name);
 		else
 			printf("                 %c %s\n", syms_arr[i].c, syms_arr[i].name);
 	}
 }
 
-int	parse_64_little_endian(t_ctx *ctx)
+int	parse_64(t_ctx *ctx)
 {
 	Elf64_Ehdr	*elf_hdr = (Elf64_Ehdr *)ctx->map.addr;
 
@@ -125,9 +125,10 @@ int	parse_64_little_endian(t_ctx *ctx)
 			continue ;
 
 		syms_arr[sym_idx++] = (t_sym){
-			.c = get_sym_char(sym, section_hdr),
+			.c = get_sym_char_64(sym, section_hdr),
 			.value = sym->st_value,
-			.name = name
+			.name = name,
+			.show_value = sym->st_shndx != SHN_UNDEF
 		};
 	}
 
@@ -136,7 +137,7 @@ int	parse_64_little_endian(t_ctx *ctx)
 	if (ctx->print_path)
 		printf("\n%s:\n", ctx->path);
 
-	print_syms(syms_arr, sym_idx);
+	print_syms_64(syms_arr, sym_idx);
 
 	free(syms_arr);
 	return (0);

@@ -6,15 +6,16 @@ LFLAGS :=
 
 ###
 
-INCLUDE_DIRS :=	inc/		\
-				libft/		\
+INCLUDE_DIRS :=	inc/			\
+				libft/			\
 
-C_SRCS :=	src/main.c		\
-			src/header.c	\
-			src/map.c		\
-			src/parse.c		\
-			src/sort.c		\
-			src/itoa.c		\
+C_SRCS :=	src/main.c			\
+			src/header.c		\
+			src/map.c			\
+			src/parse64.c		\
+			src/parse32.c		\
+			src/sort.c			\
+			src/itoa.c			\
 
 
 ###

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:09:14 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 12:39:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/13 16:17:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ typedef struct s_ctx
 
 typedef struct	s_sym
 {
+	int			show_value;
+
 	char		c;
 	uint64_t	value;
 	char		*name;
@@ -49,6 +51,7 @@ int	parse_elf_header(t_ctx *ctx);
 int	get_map(t_map *map, const char *path);
 int	close_map(t_map *map);
 
-int	parse_64_little_endian(t_ctx *ctx);
+int	parse_64(t_ctx *ctx);
+int	parse_32(t_ctx *ctx);
 
 void	ft_itoa_hex(char *buf, uint32_t n);
