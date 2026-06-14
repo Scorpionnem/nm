@@ -6,8 +6,9 @@ LFLAGS :=
 
 ###
 
-INCLUDE_DIRS :=	inc/			\
-				libft/			\
+INCLUDE_DIRS :=	inc/					\
+				libs/libft/				\
+				libs/ft_printf/inc/		\
 
 C_SRCS :=	src/main.c			\
 			src/header.c		\
@@ -20,7 +21,8 @@ C_SRCS :=	src/main.c			\
 
 ###
 
-LIBFT = ./libft/libft.a
+LIBFT = ./libs/libft/libft.a
+LIBFT_PRINTF = ./libs/ft_printf/libftprintf.a
 
 INCLUDE_DIRS :=	$(addprefix -I, $(INCLUDE_DIRS))
 
@@ -45,17 +47,20 @@ _RED 					:= $(shell $(TPUT) setaf 1)
 _GRAY 					:= $(shell $(TPUT) setaf 8)
 _PURPLE 				:= $(shell $(TPUT) setaf 5)
 
-compile: $(LIBFT)
+compile: $(LIBFT) $(LIBFT_PRINTF)
 	@make -j all --no-print-directory
 
 all: $(NAME)
 
 $(LIBFT):
-	@make -C ./libft all --no-print-directory
+	@make -C ./libs/libft all --no-print-directory
+
+$(LIBFT_PRINTF):
+	@make -C ./libs/ft_printf all --no-print-directory
 
 $(NAME): $(OBJS)
 	@echo 'Linking $(_BOLD)$(NAME)$(_RESET)'
-	@$(CC) $(CFLAGS) -no-pie $(LFLAGS) $(INCLUDE_DIRS) -o $@ $^ $(LIBFT)
+	@$(CC) $(CFLAGS) -no-pie $(LFLAGS) $(INCLUDE_DIRS) -o $@ $^ $(LIBFT) $(LIBFT_PRINTF)
 
 $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -66,12 +71,14 @@ $(OBJ_DIR)/%.o: %.c
 re: fclean compile
 
 fclean: clean
-	@make -C ./libft fclean --no-print-directory
+	@make -C ./libs/libft fclean --no-print-directory
+	@make -C ./libs/ft_printf fclean --no-print-directory
 	@echo 'Removed $(_BOLD)$(NAME)$(_RESET)'
 	@rm -rf $(NAME)
 
 clean:
-	@make -C ./libft clean --no-print-directory
+	@make -C ./libs/libft clean --no-print-directory
+	@make -C ./libs/ft_printf clean --no-print-directory
 	@echo 'Removed $(_BOLD)$(OBJ_DIR)$(_RESET)'
 	@rm -rf $(OBJ_DIR)
 

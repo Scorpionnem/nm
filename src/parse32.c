@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 15:57:43 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 17:37:14 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/14 11:36:42 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,17 @@ static void	print_syms_32(t_sym *syms_arr, uint32_t syms_count)
 {
 	for (uint32_t i = 0; i < syms_count; i++)
 	{
-		char	buf1[9] = {0};
+		char	buf1[9];
+		ft_memset(buf1, 0, sizeof(buf1));
 		ft_itoa_hex(buf1, syms_arr[i].value);
 
 		char	buf2[9] = "00000000";
-		ft_memcpy(buf2 + (8 - strlen(buf1)), buf1, strlen(buf1));
+		ft_memcpy(buf2 + (8 - ft_strlen(buf1)), buf1, ft_strlen(buf1));
 
 		if (syms_arr[i].show_value)
-			printf("%s %c %s\n", buf2, syms_arr[i].c, syms_arr[i].name);
+			ft_printf("%s %c %s\n", buf2, syms_arr[i].c, syms_arr[i].name);
 		else
-			printf("                 %c %s\n", syms_arr[i].c, syms_arr[i].name);
+			ft_printf("                 %c %s\n", syms_arr[i].c, syms_arr[i].name);
 	}
 }
 
@@ -87,7 +88,7 @@ int	parse_32(t_ctx *ctx)
 		}
 
 	if (!found)
-		return (printf("ft_nm: %s: no symbols\n", ctx->path), -1);
+		return (ft_printf("ft_nm: %s: no symbols\n", ctx->path), -1);
 
 	Elf32_Shdr	*string_hdr = &section_hdr[symtab_hdr->sh_link];
 	Elf32_Sym	*symbols = (Elf32_Sym *)((char *)ctx->map.addr + symtab_hdr->sh_offset);
@@ -122,7 +123,7 @@ int	parse_32(t_ctx *ctx)
 		sort_syms(syms_arr, ctx->reverse_sort, 0, sym_idx - 1);
 
 	if (ctx->print_path)
-		printf("\n%s:\n", ctx->path);
+		ft_printf("\n%s:\n", ctx->path);
 
 	print_syms_32(syms_arr, sym_idx);
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 22:27:19 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 17:34:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/14 11:36:13 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	ft_nm(t_ctx *ctx, char *path)
 	}
 
 	if (!ctx->is_little_endian)
-		return (printf("ft_nm: %s: endianness not supported\n", ctx->path), -1);
+		return (ft_printf("ft_nm: %s: endianness not supported\n", ctx->path), -1);
 
 	if (ctx->is_x64)	
 		parse_64(ctx);
@@ -61,11 +61,6 @@ Options:\n\
 \n\
 "
 
-void	print_help()
-{
-	printf(HELP_STRING);
-}
-
 int	parse_opt(t_ctx *ctx, int *ac, char ***av)
 {
 	int	i = -1;
@@ -78,7 +73,7 @@ int	parse_opt(t_ctx *ctx, int *ac, char ***av)
 		char	*arg = (*av)[i];
 
 		if (!ft_strcmp("-h", arg))
-			return (print_help(), -1);
+			return (ft_printf(HELP_STRING), -1);
 		else if (!ft_strcmp("-a", arg))
 			ctx->show_debug_syms = 1;
 		else if (!ft_strcmp("-p", arg))
@@ -101,7 +96,9 @@ int	parse_opt(t_ctx *ctx, int *ac, char ***av)
 
 int	main(int ac, char **av)
 {
-	t_ctx	ctx = {0};
+	t_ctx	ctx;
+
+	ft_memset(&ctx, 0, sizeof(t_ctx));
 
 	if (parse_opt(&ctx, &ac, &av) == -1)
 		return (-1);

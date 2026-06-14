@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:09:14 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 17:13:20 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/14 11:33:28 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <stdint.h>
 
 #include "libft.h"
+#include "ft_printf.h"
 
 typedef struct s_map
 {
