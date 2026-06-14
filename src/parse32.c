@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 15:57:43 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/14 11:36:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/14 11:49:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,9 @@ static void	print_syms_32(t_sym *syms_arr, uint32_t syms_count)
 {
 	for (uint32_t i = 0; i < syms_count; i++)
 	{
+		if (!syms_arr[i].print)
+			continue ;
+
 		char	buf1[9];
 		ft_memset(buf1, 0, sizeof(buf1));
 		ft_itoa_hex(buf1, syms_arr[i].value);
@@ -111,11 +114,20 @@ int	parse_32(t_ctx *ctx)
 			|| (!ctx->show_debug_syms && ELF32_ST_TYPE(sym->st_info) == STT_SECTION))
 			continue ;
 
+		char	sym_c = get_sym_char_32(sym, section_hdr);
+
+		int	print = 1;
+		if (sym->st_shndx != SHN_UNDEF && ctx->show_undefined_only)
+			print = 0;
+		if ((sym_c >= 'a' && sym_c <= 'z' && sym_c != 'w') && ctx->show_extern_only)
+			print = 0;
+
 		syms_arr[sym_idx++] = (t_sym){
-			.c = get_sym_char_32(sym, section_hdr),
+			.c = sym_c,
 			.value = sym->st_value,
 			.name = name,
-			.show_value = sym->st_shndx != SHN_UNDEF
+			.show_value = sym->st_shndx != SHN_UNDEF,
+			.print = print
 		};
 	}
 

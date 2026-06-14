@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:09:14 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/14 11:33:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/14 11:39:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_ctx
 typedef struct	s_sym
 {
 	int			show_value;
+	int			print;
 
 	char		c;
 	uint64_t	value;
