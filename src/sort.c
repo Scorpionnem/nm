@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:29:42 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/13 17:01:26 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/14 11:55:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	partition(t_sym *arr, int reverse, int low, int high)
 
 	for (int j = low; j <= high - 1; j++)
 	{
-		int	do_swap = reverse ? ft_strcmp(arr[j].name, pivot.name) > 0 : ft_strcmp(arr[j].name, pivot.name) < 0;
+		int	do_swap = reverse ? ft_strcmp(arr[j].name, pivot.name) >= 0 : ft_strcmp(arr[j].name, pivot.name) <= 0;
 		if (do_swap)
 		{
 			i++;
