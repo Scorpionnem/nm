@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:02:22 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/14 11:48:46 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/14 17:27:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,15 @@ static void	print_syms_64(t_sym *syms_arr, uint64_t syms_count)
 	}
 }
 
+#define CHECK_INVALID_BOUNDS(address) ((void*)address > ctx->map.addr + ctx->map.size)
+
 int	parse_64(t_ctx *ctx)
 {
 	Elf64_Ehdr	*elf_hdr = (Elf64_Ehdr *)ctx->map.addr;
 
 	Elf64_Shdr	*section_hdr = (Elf64_Shdr *)((char *)ctx->map.addr + elf_hdr->e_shoff);
+	if (CHECK_INVALID_BOUNDS(section_hdr))
+		return (ft_printf("ft_nm: %s: file format not recognized\n", ctx->path), -1);
 
 	Elf64_Shdr	*symtab_hdr = NULL;
 
@@ -95,10 +99,14 @@ int	parse_64(t_ctx *ctx)
 
 	Elf64_Shdr	*string_hdr = &section_hdr[symtab_hdr->sh_link];
 	Elf64_Sym	*symbols = (Elf64_Sym *)((char *)ctx->map.addr + symtab_hdr->sh_offset);
-
+	if (CHECK_INVALID_BOUNDS(symbols))
+		return (ft_printf("ft_nm: %s: file format not recognized\n", ctx->path), -1);
+	
 	size_t		nsyms = symtab_hdr->sh_size / sizeof(Elf64_Sym);
 
 	char	*strings = (char *)ctx->map.addr + string_hdr->sh_offset;
+	if (CHECK_INVALID_BOUNDS(strings))
+		return (ft_printf("ft_nm: %s: file format not recognized\n", ctx->path), -1);
 
 	t_sym	*syms_arr = malloc(nsyms * sizeof(t_sym));
 	int		sym_idx = 0;
@@ -108,6 +116,11 @@ int	parse_64(t_ctx *ctx)
 		Elf64_Sym	*sym = &symbols[i];
 
 		char *name = strings + sym->st_name;
+		if (CHECK_INVALID_BOUNDS(name))
+		{
+			free(syms_arr);
+			return (ft_printf("ft_nm: %s: file format not recognized\n", ctx->path), -1);
+		}
 
 		if ((!ctx->show_debug_syms && name[0] == 0)
 			|| (!ctx->show_debug_syms && ELF64_ST_TYPE(sym->st_info) == STT_FILE)
