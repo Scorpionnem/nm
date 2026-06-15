@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/13 15:57:43 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/14 17:27:41 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/15 09:04:56 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,37 +19,45 @@
 
 static char	get_sym_char_32(Elf32_Sym *sym, Elf32_Shdr *section_hdr)
 {
-	uint8_t	bind = ELF32_ST_BIND(sym->st_info);
+	uint8_t bind = ELF32_ST_BIND(sym->st_info);
+	uint8_t st_type = ELF32_ST_TYPE(sym->st_info);
+
 	switch (sym->st_shndx)
 	{
 		case SHN_UNDEF:
-			return (bind == STB_WEAK ? 'w' : 'U');
+		{
+			if (bind == STB_WEAK)
+				return (st_type == STT_OBJECT ? 'v' : 'w');
+			return ('U');
+		}
 		case SHN_ABS:
 			return (bind == STB_GLOBAL ? 'A' : 'a');
 		case SHN_COMMON:
 			return (bind == STB_GLOBAL ? 'C' : 'c');
 	}
+
 	if (bind == STB_WEAK)
-		return ('W');
+		return (st_type == STT_OBJECT ? 'V' : 'W');
 
 	unsigned int	type = section_hdr[sym->st_shndx].sh_type;
 	unsigned int	flags = section_hdr[sym->st_shndx].sh_flags;
 
-	char	res = '?';
+	char res;
 
 	if (flags & SHF_EXECINSTR)
 		res = 'T';
-	else if (flags & SHF_ALLOC && type == SHT_NOBITS)
+	else if ((flags & SHF_ALLOC) && type == SHT_NOBITS)
 		res = 'B';
-	else if (flags & SHF_ALLOC && flags & SHF_WRITE)
+	else if ((flags & SHF_ALLOC) && (flags & SHF_WRITE))
 		res = 'D';
-	else if (flags & SHF_ALLOC && !(flags & SHF_WRITE))
+	else if (flags & SHF_ALLOC)
 		res = 'R';
 	else
-		return ('?');
+		res = '?';
 
-	if (bind != STB_GLOBAL)
+	if (bind == STB_LOCAL)
 		res += 32;
+
 	return (res);
 }
 
