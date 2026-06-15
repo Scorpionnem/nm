@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 22:27:19 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/15 10:49:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/15 10:55:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,15 @@ int	ft_nm(t_ctx *ctx, char *path)
 		return (-1);
 	}
 
+	int	res = 0;
+
 	if (ctx->is_x64)	
-		parse_64(ctx);
+		res = parse_64(ctx);
 	else
-		parse_32(ctx);
+		res = parse_32(ctx);
 
 	close_map(&ctx->map);
-	return (0);
+	return (res);
 }
 
 #define HELP_STRING "\
