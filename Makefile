@@ -17,6 +17,7 @@ C_SRCS :=	src/main.c			\
 			src/parse32.c		\
 			src/sort.c			\
 			src/itoa.c			\
+			src/endian.c		\
 
 
 ###

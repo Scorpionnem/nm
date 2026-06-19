@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:02:22 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/15 09:05:17 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/19 20:59:45 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,9 @@
 #include <stdlib.h>
 
 #include "ctx.h"
+#include "endian.h"
 
-static char	get_sym_char_64(Elf64_Sym *sym, Elf64_Shdr *section_hdr)
+static char	get_sym_char_64(Elf64_Sym *sym, Elf64_Shdr *section_hdr, int is_little_endian)
 {
 	uint8_t bind = ELF64_ST_BIND(sym->st_info);
 	uint8_t st_type = ELF64_ST_TYPE(sym->st_info);
@@ -39,8 +40,8 @@ static char	get_sym_char_64(Elf64_Sym *sym, Elf64_Shdr *section_hdr)
 	if (bind == STB_WEAK)
 		return (st_type == STT_OBJECT ? 'V' : 'W');
 
-	unsigned int	type = section_hdr[sym->st_shndx].sh_type;
-	unsigned int	flags = section_hdr[sym->st_shndx].sh_flags;
+	uint32_t	type = fix_u32_endian(section_hdr[sym->st_shndx].sh_type, is_little_endian);
+	uint32_t	flags = fix_u32_endian(section_hdr[sym->st_shndx].sh_flags, is_little_endian);
 
 	char res;
 
@@ -61,9 +62,9 @@ static char	get_sym_char_64(Elf64_Sym *sym, Elf64_Shdr *section_hdr)
 	return (res);
 }
 
-static void	print_syms_64(t_sym *syms_arr, uint64_t syms_count)
+static void	print_syms_32(t_sym *syms_arr, uint32_t syms_count)
 {
-	for (uint64_t i = 0; i < syms_count; i++)
+	for (uint32_t i = 0; i < syms_count; i++)
 	{
 		if (!syms_arr[i].print)
 			continue ;
@@ -88,15 +89,15 @@ int	parse_64(t_ctx *ctx)
 {
 	Elf64_Ehdr	*elf_hdr = (Elf64_Ehdr *)ctx->map.addr;
 
-	Elf64_Shdr	*section_hdr = (Elf64_Shdr *)((char *)ctx->map.addr + elf_hdr->e_shoff);
+	Elf64_Shdr	*section_hdr = (Elf64_Shdr *)((char *)ctx->map.addr + fix_u64_endian(elf_hdr->e_shoff, ctx->is_little_endian));
 	if (CHECK_INVALID_BOUNDS(section_hdr))
 		return (ft_printf("ft_nm: %s: file format not recognized\n", ctx->path), -1);
 
 	Elf64_Shdr	*symtab_hdr = NULL;
 
 	int	found = 0;
-	for (int i = 0; i < elf_hdr->e_shnum; i++)
-		if (section_hdr[i].sh_type == SHT_SYMTAB)
+	for (int i = 0; i < fix_u16_endian(elf_hdr->e_shnum, ctx->is_little_endian); i++)
+		if (fix_u32_endian(section_hdr[i].sh_type, ctx->is_little_endian) == SHT_SYMTAB)
 		{
 			symtab_hdr = &section_hdr[i];
 			found = 1;
@@ -106,13 +107,13 @@ int	parse_64(t_ctx *ctx)
 		return (ft_printf("ft_nm: %s: no symbols\n", ctx->path), -1);
 
 	Elf64_Shdr	*string_hdr = &section_hdr[symtab_hdr->sh_link];
-	Elf64_Sym	*symbols = (Elf64_Sym *)((char *)ctx->map.addr + symtab_hdr->sh_offset);
+	Elf64_Sym	*symbols = (Elf64_Sym *)((char *)ctx->map.addr + fix_u32_endian(symtab_hdr->sh_offset, ctx->is_little_endian));
 	if (CHECK_INVALID_BOUNDS(symbols))
 		return (ft_printf("ft_nm: %s: file format not recognized\n", ctx->path), -1);
-	
-	size_t		nsyms = symtab_hdr->sh_size / sizeof(Elf64_Sym);
 
-	char	*strings = (char *)ctx->map.addr + string_hdr->sh_offset;
+	size_t		nsyms = fix_u64_endian(symtab_hdr->sh_size, ctx->is_little_endian) / sizeof(Elf64_Sym);
+
+	char	*strings = (char *)ctx->map.addr + fix_u64_endian(string_hdr->sh_offset, ctx->is_little_endian);
 	if (CHECK_INVALID_BOUNDS(strings))
 		return (ft_printf("ft_nm: %s: file format not recognized\n", ctx->path), -1);
 
@@ -123,7 +124,7 @@ int	parse_64(t_ctx *ctx)
 	{
 		Elf64_Sym	*sym = &symbols[i];
 
-		char *name = strings + sym->st_name;
+		char *name = strings + fix_u32_endian(sym->st_name, ctx->is_little_endian);
 		if (CHECK_INVALID_BOUNDS(name))
 		{
 			free(syms_arr);
@@ -135,19 +136,19 @@ int	parse_64(t_ctx *ctx)
 			|| (!ctx->show_debug_syms && ELF64_ST_TYPE(sym->st_info) == STT_SECTION))
 			continue ;
 
-		char	sym_c = get_sym_char_64(sym, section_hdr);
+		char	sym_c = get_sym_char_64(sym, section_hdr, ctx->is_little_endian);
 
 		int	print = 1;
-		if (sym->st_shndx != SHN_UNDEF && ctx->show_undefined_only)
+		if (fix_u16_endian(sym->st_shndx, ctx->is_little_endian) != SHN_UNDEF && ctx->show_undefined_only)
 			print = 0;
 		if ((sym_c >= 'a' && sym_c <= 'z' && sym_c != 'w') && ctx->show_extern_only)
 			print = 0;
 
 		syms_arr[sym_idx++] = (t_sym){
 			.c = sym_c,
-			.value = sym->st_value,
+			.value = fix_u64_endian(sym->st_value, ctx->is_little_endian),
 			.name = name,
-			.show_value = sym->st_shndx != SHN_UNDEF,
+			.show_value = fix_u16_endian(sym->st_shndx, ctx->is_little_endian) != SHN_UNDEF,
 			.print = print
 		};
 	}
@@ -158,7 +159,7 @@ int	parse_64(t_ctx *ctx)
 	if (ctx->print_path)
 		ft_printf("\n%s:\n", ctx->path);
 
-	print_syms_64(syms_arr, sym_idx);
+	print_syms_32(syms_arr, sym_idx);
 
 	free(syms_arr);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 22:06:28 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/15 10:49:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/19 20:45:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <endian.h>
 
 #include "ctx.h"
+#include "endian.h"
 
 int	parse_elf_header(t_ctx *ctx)
 {
@@ -46,18 +47,15 @@ int	parse_elf_header(t_ctx *ctx)
 		return (ft_printf("ft_nm: %s: invalid endianness %d\n", ctx->path, data), -1);
 	ctx->is_little_endian = data == ELFDATA2LSB;
 
-	if (!ctx->is_little_endian) // yes 8 hours to retry for that!
-		return (ft_printf("ft_nm: %s: endianness not supported\n", ctx->path), -1);
-
-	int	type = hdr->e_type;
+	int	type = fix_u16_endian(hdr->e_type, ctx->is_little_endian);
 	if (type != ET_REL && type != ET_EXEC && type != ET_DYN)
 		return (ft_printf("ft_nm: %s: invalid object type %d\n", ctx->path, type), -1);
 
-	int	machine = hdr->e_machine;
+	int	machine = fix_u16_endian(hdr->e_machine, ctx->is_little_endian);;
 	if ((!ctx->is_x64 && machine != EM_386) || (ctx->is_x64 && machine != EM_X86_64))
 		return (ft_printf("ft_nm: %s: invalid architecture %d\n", ctx->path, machine), -1);
 
-	int version = hdr->e_version;
+	int version = fix_u32_endian(hdr->e_version, ctx->is_little_endian);
 	if (version != 1)
 		return (ft_printf("ft_nm: %s: invalid ELF version %d\n", ctx->path, version), -1);
 
