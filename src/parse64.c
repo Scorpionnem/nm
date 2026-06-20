@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/12 23:02:22 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/19 20:59:45 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/20 18:56:47 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static char	get_sym_char_64(Elf64_Sym *sym, Elf64_Shdr *section_hdr, int is_litt
 	return (res);
 }
 
-static void	print_syms_32(t_sym *syms_arr, uint32_t syms_count)
+static void	print_syms_64(t_sym *syms_arr, uint32_t syms_count)
 {
 	for (uint32_t i = 0; i < syms_count; i++)
 	{
@@ -159,7 +159,7 @@ int	parse_64(t_ctx *ctx)
 	if (ctx->print_path)
 		ft_printf("\n%s:\n", ctx->path);
 
-	print_syms_32(syms_arr, sym_idx);
+	print_syms_64(syms_arr, sym_idx);
 
 	free(syms_arr);
 	return (0);
