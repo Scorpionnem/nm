@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 22:27:19 by mbatty            #+#    #+#             */
-/*   Updated: 2026/06/15 10:55:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2026/06/20 18:48:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	main(int ac, char **av)
 	if (ac == 0)
 		return (ft_nm(&ctx, "a.out") ? 1 : 0);
 
-	ctx.print_path = ac > 2;
+	ctx.print_path = ac >= 2;
 
 	int	error = 0;
 
